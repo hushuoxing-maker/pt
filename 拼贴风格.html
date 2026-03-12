@@ -16,8 +16,7 @@ font-family:"Microsoft YaHei",sans-serif;
 
 body{
 
-background:
-linear-gradient(120deg,#0f172a,#1e293b,#111827,#020617);
+background:linear-gradient(120deg,#0f172a,#1e293b,#111827,#020617);
 
 min-height:100vh;
 padding:60px;
@@ -56,6 +55,7 @@ h1{
 text-align:center;
 font-size:36px;
 margin-bottom:50px;
+
 background:linear-gradient(90deg,#f472b6,#22d3ee,#facc15);
 -webkit-background-clip:text;
 color:transparent;
@@ -74,8 +74,7 @@ border-radius:20px;
 
 border:1px solid rgba(255,255,255,0.15);
 
-box-shadow:
-0 10px 40px rgba(0,0,0,0.5);
+box-shadow:0 10px 40px rgba(0,0,0,0.5);
 
 margin-bottom:30px;
 
@@ -153,9 +152,7 @@ margin-top:40px;
 
 .promptCard{
 
-background:
-
-linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));
+background:linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));
 
 border-radius:18px;
 
@@ -233,7 +230,7 @@ color:#fff;
 
 <div class="container">
 
-<h1>拼贴创意 · 拼贴风格海报提示词生成器 - 古月AI智能体</h1>
+<h1>拼贴创意 · 拼贴风格海报提示词生成器</h1>
 
 <div class="card">
 
@@ -245,6 +242,9 @@ color:#fff;
 
 <label>海报类型</label>
 <input id="type" placeholder="例如：品牌活动 / 音乐节 / 艺术展">
+
+<label>辅助文字（可输入多个，用 / 分隔）</label>
+<input id="assist" placeholder="例如：新品上线 / 限时活动 / 创意展览">
 
 <button class="generate" onclick="generate()">生成20组提示词</button>
 
@@ -260,7 +260,7 @@ function rand(arr){
 return arr[Math.floor(Math.random()*arr.length)];
 }
 
-/* 辅助文字 */
+/* 默认辅助文字 */
 
 let assistTexts=[
 
@@ -313,6 +313,7 @@ function generate(){
 let title=document.getElementById("title").value.trim();
 let subtitle=document.getElementById("subtitle").value.trim();
 let type=document.getElementById("type").value.trim();
+let assistInput=document.getElementById("assist").value.trim();
 
 if(!title){
 
@@ -323,12 +324,25 @@ return;
 }
 
 let container=document.getElementById("results");
-
 container.innerHTML="";
+
+/* 用户辅助文字 */
+
+let userAssist=[];
+if(assistInput){
+userAssist=assistInput.split("/");
+}
 
 for(let i=1;i<=20;i++){
 
-let assist=rand(assistTexts);
+let assist;
+
+if(userAssist.length>0){
+assist=rand(userAssist);
+}else{
+assist=rand(assistTexts);
+}
+
 let visual=rand(visuals);
 let layout=rand(layouts);
 
@@ -347,7 +361,6 @@ let text=`主标题：${title}
 风格：拼贴风格设计，多元素混搭，视觉层次丰富，色彩大胆碰撞，创意组合突出，整体视觉冲击力强。`;
 
 let card=document.createElement("div");
-
 card.className="promptCard";
 
 card.innerHTML=`
@@ -367,16 +380,12 @@ btn.onclick=function(){
 navigator.clipboard.writeText(text);
 
 btn.innerText="已复制";
-
 btn.classList.add("copied");
 
 setTimeout(()=>{
-
 btn.innerText="复制提示词";
-
 btn.classList.remove("copied");
-
-},3000);
+},2000);
 
 };
 
